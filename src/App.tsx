@@ -11,21 +11,49 @@ export const App = () => {
   const [text, setText] = useState('');
   const [todos, setTodos] = useState<Todo[]>([]);
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setText(e.target.value);
+  };
+
+  const handleSubmit = () => {
+    // 何も入力されていなかったらリターン
+    if (!text) return;
+    // 新しい Todo を作成
+    // 明示的に型注釈を付けてオブジェクトの型を限定する
+    const newTodo: Todo = {
+      value: text,
+    };
+
+    /**
+     * スプレッド構文を用いて todos ステートのコピーへ newTodo を追加する
+     * 以下と同義
+     *
+     * const copyTodos = todos.slice();  // 配列をコピー
+     * copyTodos.unshift(newTodo);  // 配列の先頭に要素を追加
+     * setTodos(copyTodos);
+     *
+     **/
+    setTodos([newTodo, ...todos]);
+    // フォームへの入力をクリアする
+    setText('');
+  };
+
   return (
     <div>
-      <form onSubmit={(e) => e.preventDefault()}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
         <input
           type="text"
           // text ステートが持っている入力中テキストの値を value として表示
           value={text}
           // onChange イベント（＝入力テキストの変化）を text ステートに反映する
-          onChange={(e) => setText(e.target.value)}
+          onChange={(e) => handleChange(e)}
         />
-        <input
-          type="submit"
-          value="追加"
-          onSubmit={(e) => e.preventDefault()}
-        />
+        <input type="submit" value="追加" onSubmit={handleSubmit} />
       </form>
       {/* ↓ DOM のリアクティブな反応を見るためのサンプル */}
       <p>{text}</p>
