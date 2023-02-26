@@ -1,8 +1,15 @@
 import { useState } from 'react';
 
+// Todo 型の定義
+type Todo = {
+  // プロパティ value は文字列型
+  value: string;
+};
+
 export const App = () => {
   // 初期値: ''  （空文字列）のステート
   const [text, setText] = useState('');
+  const [todos, setTodos] = useState<Todo[]>([]);
 
   return (
     <div>
