@@ -3,6 +3,8 @@ import { useState } from 'react';
 type Todo = {
   value: string;
   readonly id: number;
+  // 完了/未完了を示すプロパティ
+  checked: boolean;
 };
 
 export const App = () => {
@@ -19,6 +21,8 @@ export const App = () => {
     const newTodo: Todo = {
       value: text,
       id: new Date().getTime(),
+      // 初期値（todo 作成時）は false
+      checked: false,
     };
 
     setTodos([newTodo, ...todos]);
@@ -31,6 +35,19 @@ export const App = () => {
     const newTodos = deepCopy.map((todo) => {
       if (todo.id === id) {
         todo.value = value;
+      }
+      return todo;
+    });
+
+    setTodos(newTodos);
+  };
+
+  const handleCheck = (id: number, checked: boolean) => {
+    const deepCopy = todos.map((todo) => ({ ...todo }));
+
+    const newTodos = deepCopy.map((todo) => {
+      if (todo.id === id) {
+        todo.checked = !checked;
       }
       return todo;
     });
@@ -54,7 +71,13 @@ export const App = () => {
           return (
             <li key={todo.id}>
               <input
+                type="checkbox"
+                checked={todo.checked}
+                onChange={() => handleCheck(todo.id, todo.checked)}
+              />
+              <input
                 type="text"
+                disabled={todo.checked}
                 value={todo.value}
                 onChange={(e) => handleEdit(todo.id, e.target.value)}
               />
