@@ -4,6 +4,7 @@ import { useState } from 'react';
 type Todo = {
   // プロパティ value は文字列型
   value: string;
+  readonly id: number;
 };
 
 export const App = () => {
@@ -22,6 +23,7 @@ export const App = () => {
     // 明示的に型注釈を付けてオブジェクトの型を限定する
     const newTodo: Todo = {
       value: text,
+      id: new Date().getTime(),
     };
 
     /**
@@ -55,9 +57,11 @@ export const App = () => {
         />
         <input type="submit" value="追加" onSubmit={handleSubmit} />
       </form>
-      {/* ↓ DOM のリアクティブな反応を見るためのサンプル */}
-      <p>{text}</p>
-      {/* ↑ あとで削除 */}
+      <ul>
+        {todos.map((todo) => {
+          return <li key={todo.id}>{todo.value}</li>;
+        })}
+      </ul>
     </div>
   );
 };
