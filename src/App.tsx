@@ -26,19 +26,15 @@ export const App = () => {
   };
 
   const handleEdit = (id: number, value: string) => {
-    /**
-     * 引数として渡された todo の id が一致する
-     * todos ステート（のコピー）内の todo の
-     * value プロパティを引数 value (= e.target.value) に書き換える
-     */
-    const newTodos = todos.map((todo) => {
+    const deepCopy = todos.map((todo) => ({ ...todo }));
+
+    const newTodos = deepCopy.map((todo) => {
       if (todo.id === id) {
         todo.value = value;
       }
       return todo;
     });
 
-    // todos ステートを更新
     setTodos(newTodos);
   };
 
