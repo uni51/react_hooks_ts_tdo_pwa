@@ -19,6 +19,27 @@ export const App = () => {
     setText(e.target.value);
   };
 
+  const handleTodo = <
+    T extends Todo['id'],
+    U extends keyof Todo,
+    V extends Todo[U]
+  >(
+    id: T,
+    key: U,
+    value: V
+  ) => {
+    const deepCopy = todos.map((todo) => ({ ...todo }));
+
+    const newTodos = deepCopy.map((todo) => {
+      if (todo.id === id) {
+        todo[key] = value;
+      }
+      return todo;
+    });
+
+    setTodos(newTodos);
+  };
+
   const handleSubmit = () => {
     if (!text) return;
 
@@ -32,45 +53,6 @@ export const App = () => {
 
     setTodos([newTodo, ...todos]);
     setText('');
-  };
-
-  const handleEdit = (id: number, value: string) => {
-    const deepCopy = todos.map((todo) => ({ ...todo }));
-
-    const newTodos = deepCopy.map((todo) => {
-      if (todo.id === id) {
-        todo.value = value;
-      }
-      return todo;
-    });
-
-    setTodos(newTodos);
-  };
-
-  const handleCheck = (id: number, checked: boolean) => {
-    const deepCopy = todos.map((todo) => ({ ...todo }));
-
-    const newTodos = deepCopy.map((todo) => {
-      if (todo.id === id) {
-        todo.checked = !checked;
-      }
-      return todo;
-    });
-
-    setTodos(newTodos);
-  };
-
-  const handleRemove = (id: number, removed: boolean) => {
-    const deepCopy = todos.map((todo) => ({ ...todo }));
-
-    const newTodos = deepCopy.map((todo) => {
-      if (todo.id === id) {
-        todo.removed = !removed;
-      }
-      return todo;
-    });
-
-    setTodos(newTodos);
   };
 
   const handleSort = (filter: Filter) => {
@@ -144,15 +126,17 @@ export const App = () => {
                 type="checkbox"
                 disabled={todo.removed}
                 checked={todo.checked}
-                onChange={() => handleCheck(todo.id, todo.checked)}
+                onChange={() => handleTodo(todo.id, 'checked', !todo.checked)}
               />
               <input
                 type="text"
                 disabled={todo.checked || todo.removed}
                 value={todo.value}
-                onChange={(e) => handleEdit(todo.id, e.target.value)}
+                onChange={(e) => handleTodo(todo.id, 'value', e.target.value)}
               />
-              <button onClick={() => handleRemove(todo.id, todo.removed)}>
+              <button
+                onClick={() => handleTodo(todo.id, 'removed', !todo.removed)}
+              >
                 {todo.removed ? '復元' : '削除'}
               </button>
             </li>
