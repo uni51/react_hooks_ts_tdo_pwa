@@ -7,6 +7,7 @@ import IconButton from '@mui/material/IconButton';
 
 type Props = {
   filter: Filter;
+  onToggleDrawer: () => void;
 };
 
 // ※のちのユニットテスト用にエクスポートしておく
@@ -36,6 +37,7 @@ export const ToolBar = (props: Props) => {
             edge="start"
             color="inherit"
             sx={{ mr: 2 }}
+            onClick={props.onToggleDrawer}
           >
             <Icon>menu</Icon>
           </IconButton>
