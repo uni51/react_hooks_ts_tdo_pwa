@@ -1,18 +1,30 @@
 import { useState } from 'react';
+import GlobalStyles from '@mui/material/GlobalStyles';
+import { ToolBar } from './ToolBar';
 import { FormDialog } from './FormDialog';
 import { ActionButton } from './ActionButton';
 import { SideBar } from './SideBar';
 import { TodoItem } from './TodoItem';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { indigo, pink } from '@mui/material/colors';
 
-type Todo = {
-  value: string;
-  readonly id: number;
-  // 完了/未完了を示すプロパティ
-  checked: boolean;
-  removed: boolean;
-};
-
-type Filter = 'all' | 'checked' | 'unchecked' | 'removed';
+// テーマを作成
+const theme = createTheme({
+  palette: {
+    // プライマリーカラー
+    primary: {
+      main: indigo[500],
+      light: '#757de8',
+      dark: '#002984',
+    },
+    // ついでにセカンダリーカラーも v4 に戻す
+    secondary: {
+      main: pink[500],
+      light: '#ff6090',
+      dark: '#b0003a',
+    },
+  },
+});
 
 export const App = () => {
   const [text, setText] = useState('');
@@ -70,11 +82,13 @@ export const App = () => {
   };
 
   return (
-    <div>
+    <ThemeProvider theme={theme}>
+      <GlobalStyles styles={{ body: { margin: 0, padding: 0 } }} />
+      <ToolBar filter={filter} />
       <SideBar onSort={handleSort} />
       <FormDialog text={text} onChange={handleChange} onSubmit={handleSubmit} />
       <TodoItem todos={todos} filter={filter} onTodo={handleTodo} />
       <ActionButton todos={todos} onEmpty={handleEmpty} />
-    </div>
+    </ThemeProvider>
   );
 };
