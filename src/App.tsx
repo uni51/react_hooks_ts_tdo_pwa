@@ -1,24 +1,24 @@
 import { useState } from 'react';
+
 import GlobalStyles from '@mui/material/GlobalStyles';
-import { ToolBar } from './ToolBar';
-import { FormDialog } from './FormDialog';
-import { ActionButton } from './ActionButton';
-import { SideBar } from './SideBar';
-import { TodoItem } from './TodoItem';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { indigo, pink } from '@mui/material/colors';
-import { QR } from './QR';
 
-// テーマを作成
+import { QR } from './QR';
+import { ToolBar } from './ToolBar';
+import { SideBar } from './SideBar';
+import { TodoItem } from './TodoItem';
+import { FormDialog } from './FormDialog';
+import { AlertDialog } from './AlertDialog';
+import { ActionButton } from './ActionButton';
+
 const theme = createTheme({
   palette: {
-    // プライマリーカラー
     primary: {
       main: indigo[500],
       light: '#757de8',
       dark: '#002984',
     },
-    // ついでにセカンダリーカラーも v4 に戻す
     secondary: {
       main: pink[500],
       light: '#ff6090',
@@ -33,13 +33,41 @@ export const App = () => {
   const [filter, setFilter] = useState<Filter>('all');
 
   const [qrOpen, setQrOpen] = useState(false);
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const handleToggleQR = () => setQrOpen(!qrOpen);
+  const handleToggleAlert = () => setAlertOpen(!alertOpen);
   const handleToggleDrawer = () => setDrawerOpen(!drawerOpen);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleToggleDialog = () => {
+    setDialogOpen(!dialogOpen);
+    setText('');
+  };
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setText(e.target.value);
+  };
+
+  const handleSubmit = () => {
+    if (!text) {
+      setDialogOpen(false);
+      return;
+    }
+
+    const newTodo: Todo = {
+      value: text,
+      id: new Date().getTime(),
+      checked: false,
+      removed: false,
+    };
+
+    setTodos([newTodo, ...todos]);
+    setText('');
+    setDialogOpen(false);
   };
 
   const handleTodo = <
@@ -63,29 +91,13 @@ export const App = () => {
     setTodos(newTodos);
   };
 
-  const handleSubmit = () => {
-    if (!text) return;
-
-    const newTodo: Todo = {
-      value: text,
-      id: new Date().getTime(),
-      // 初期値（todo 作成時）は false
-      checked: false,
-      removed: false,
-    };
-
-    setTodos([newTodo, ...todos]);
-    setText('');
+  const handleEmpty = () => {
+    const newTodos = todos.filter((todo) => !todo.removed);
+    setTodos(newTodos);
   };
 
   const handleSort = (filter: Filter) => {
     setFilter(filter);
-  };
-
-  const handleEmpty = () => {
-    // シャローコピーで事足りる
-    const newTodos = todos.filter((todo) => !todo.removed);
-    setTodos(newTodos);
   };
 
   return (
@@ -99,9 +111,27 @@ export const App = () => {
         onToggleDrawer={handleToggleDrawer}
       />
       <QR open={qrOpen} onClose={handleToggleQR} />
-      <FormDialog text={text} onChange={handleChange} onSubmit={handleSubmit} />
+      <FormDialog
+        text={text}
+        dialogOpen={dialogOpen}
+        onChange={handleChange}
+        onSubmit={handleSubmit}
+        onToggleDialog={handleToggleDialog}
+      />
+      <AlertDialog
+        alertOpen={alertOpen}
+        onEmpty={handleEmpty}
+        onToggleAlert={handleToggleAlert}
+      />
       <TodoItem todos={todos} filter={filter} onTodo={handleTodo} />
-      <ActionButton todos={todos} onEmpty={handleEmpty} />
+      <ActionButton
+        todos={todos}
+        filter={filter}
+        alertOpen={alertOpen}
+        dialogOpen={dialogOpen}
+        onToggleAlert={handleToggleAlert}
+        onToggleDialog={handleToggleDialog}
+      />
     </ThemeProvider>
   );
 };
