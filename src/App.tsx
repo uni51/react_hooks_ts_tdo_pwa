@@ -7,6 +7,7 @@ import { SideBar } from './SideBar';
 import { TodoItem } from './TodoItem';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { indigo, pink } from '@mui/material/colors';
+import { QR } from './QR';
 
 // テーマを作成
 const theme = createTheme({
@@ -30,8 +31,11 @@ export const App = () => {
   const [text, setText] = useState('');
   const [todos, setTodos] = useState<Todo[]>([]);
   const [filter, setFilter] = useState<Filter>('all');
+
+  const [qrOpen, setQrOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
+  const handleToggleQR = () => setQrOpen(!qrOpen);
   const handleToggleDrawer = () => setDrawerOpen(!drawerOpen);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,9 +94,11 @@ export const App = () => {
       <ToolBar filter={filter} onToggleDrawer={handleToggleDrawer} />
       <SideBar
         drawerOpen={drawerOpen}
-        onToggleDrawer={handleToggleDrawer}
         onSort={handleSort}
+        onToggleQR={handleToggleQR}
+        onToggleDrawer={handleToggleDrawer}
       />
+      <QR open={qrOpen} onClose={handleToggleQR} />
       <FormDialog text={text} onChange={handleChange} onSubmit={handleSubmit} />
       <TodoItem todos={todos} filter={filter} onTodo={handleTodo} />
       <ActionButton todos={todos} onEmpty={handleEmpty} />
