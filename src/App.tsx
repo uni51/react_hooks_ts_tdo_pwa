@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
+import localforage from 'localforage';
 
 import GlobalStyles from '@mui/material/GlobalStyles';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -11,6 +13,8 @@ import { TodoItem } from './TodoItem';
 import { FormDialog } from './FormDialog';
 import { AlertDialog } from './AlertDialog';
 import { ActionButton } from './ActionButton';
+
+import { isTodos } from './lib/isTodo';
 
 const theme = createTheme({
   palette: {
@@ -99,6 +103,12 @@ export const App = () => {
   const handleSort = (filter: Filter) => {
     setFilter(filter);
   };
+
+  useEffect(() => {
+    localforage
+      .getItem('todo-20200101')
+      .then((values) => isTodos(values) && setTodos(values));
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>
