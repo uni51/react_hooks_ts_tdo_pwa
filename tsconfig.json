@@ -14,7 +14,15 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "types": [
+      "vite-plugin-pwa/react",
+      "vite-plugin-pwa/preact",
+      "vite-plugin-pwa/solid",
+      "vite-plugin-pwa/svelte",
+      "vite-plugin-pwa/vanillajs",
+      "vite-plugin-pwa/vue"
+    ]
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
